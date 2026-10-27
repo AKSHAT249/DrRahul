@@ -489,7 +489,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-start">
           <Reveal>
             <p className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: C.coralSoft }}>Clinic Details</p>
-            <h2 className="font-display text-4xl mt-3">Heart Care Clinic</h2>
+            <h2 className="font-display text-4xl mt-3">Your Care, Close to Home</h2>
             <div className="mt-7 space-y-5 text-sm">
               <div className="flex gap-3">
                 <MapPin size={18} className="mt-0.5 shrink-0" style={{ color: C.coralSoft }} />
@@ -552,9 +552,9 @@ export default function App() {
           <div>
             <div className="flex items-center gap-2">
               <HeartPulse size={18} style={{ color: C.coral }} />
-              <span className="font-display text-lg">Dr. Rahul Verma</span>
+              <span className="font-display text-lg">Dr. Rashmi Saxena</span>
             </div>
-            <p className="mt-2" style={{ color: C.slate }}>Providing expert cardiac care with compassion and advanced treatment.</p>
+            <p className="mt-2" style={{ color: C.slate }}>Providing expert women's health care with compassion and advanced treatment.</p>
           </div>
           <div>
             <p className="font-semibold mb-2">Clinic Hours</p>
@@ -568,11 +568,11 @@ export default function App() {
             <a href={waLink("Hi Dr. Verma's clinic!")} target="_blank" rel="noreferrer" className="block" style={{ color: C.slate }}>WhatsApp</a>
           </div>
         </div>
-        <p className="text-center text-xs mt-8" style={{ color: C.slate }}>© Dr. Rahul Verma Heart Care Clinic. All rights reserved.</p>
+        <p className="text-center text-xs mt-8" style={{ color: C.slate }}>© Dr. Rashmi Saxena Women's Health Clinic. All rights reserved.</p>
       </footer>
 
       {/* ---------- FLOATING WHATSAPP ---------- */}
-      <a href={waLink("Hi! I'd like to book an appointment with Dr. Rahul Verma.")} target="_blank" rel="noreferrer"
+      <a href={waLink("Hi! I'd like to book an appointment with Dr. Rashmi Saxena.")} target="_blank" rel="noreferrer"
         aria-label="Chat on WhatsApp"
         className="wa-pulse fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
         style={{ background: C.coral }}>
