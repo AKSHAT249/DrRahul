@@ -314,7 +314,7 @@ export default function App() {
       <section className="border-y" style={{ borderColor: C.sandDeep, background: C.white }}>
         <div className="max-w-6xl mx-auto px-6 py-6 grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           {[
-            "MBBS — UP RIMS & R, Para medical & Nursing college, Saifai, Etawah",
+            "MBBS — UP RIMS & R Nursing College, Saifai, Etawah",
             "MS — King George's Medical University(KGMU), Lucknow",
             "Assistant Professor — Career Medical College, Lucknow",
             "Associated with leading hospitals in Lucknow",
@@ -493,11 +493,11 @@ export default function App() {
             <div className="mt-7 space-y-5 text-sm">
               <div className="flex gap-3">
                 <MapPin size={18} className="mt-0.5 shrink-0" style={{ color: C.coralSoft }} />
-                <p style={{ color: "#C7CCD9" }}>123, Hirala Nagar, Near Meredia Hospital, Lucknow, Uttar Pradesh 226020</p>
+                <p style={{ color: "#C7CCD9" }}>DRD OBS and Gyne Clinic Jankipuram, Lucknow, Uttar Pradesh 226020</p>
               </div>
               <div className="flex gap-3">
                 <Clock size={18} className="mt-0.5 shrink-0" style={{ color: C.coralSoft }} />
-                <p style={{ color: "#C7CCD9" }}>Monday – Saturday · 9:00 AM – 1:00 PM &amp; 5:00 PM – 8:30 PM</p>
+                <p style={{ color: "#C7CCD9" }}>Monday – Saturday · 4:00 PM – 8:30 PM</p>
               </div>
               <div className="flex gap-3">
                 <ShieldCheck size={18} className="mt-0.5 shrink-0" style={{ color: C.coralSoft }} />
