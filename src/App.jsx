@@ -314,9 +314,9 @@ export default function App() {
       <section className="border-y" style={{ borderColor: C.sandDeep, background: C.white }}>
         <div className="max-w-6xl mx-auto px-6 py-6 grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           {[
-            "MBBS — King George's Medical University",
-            "MD (General Medicine) — KGMC, Lucknow",
-            "DM (Cardiology) — SGPGIMS, Lucknow",
+            "MBBS — UP RIMS & R, Para medical & Nursing college, Saifai, Etawah",
+            "MS — King George's Medical University(KGMU), Lucknow",
+            "Assistant Professor — Career Medical College, Lucknow",
             "Associated with leading hospitals in Lucknow",
           ].map((t) => (
             <div key={t} className="flex items-start gap-2">
