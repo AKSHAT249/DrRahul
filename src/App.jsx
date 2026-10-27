@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Menu, X, Star, MapPin, Phone, Clock, MessageCircle, ChevronRight, ChevronDown,
   HeartPulse, Activity, ShieldCheck, Stethoscope, Award, Globe2, Lock, CreditCard,
+  Heart, Calendar, User,
 } from "lucide-react";
+import { SPECIALTIES, TRUST_POINTS, REVIEWS, FAQS } from "./constants";
+import doctorPhoto from "./assets/doctor-hero.png";
 
 /* ---------- brand tokens ---------- */
 const C = {
@@ -16,9 +19,24 @@ const C = {
   slate: "#5B6472",
 };
 
-const PHONE_DISPLAY = "+91 98765 43210";
-const WA_NUMBER = "919876543210";
+const PHONE_DISPLAY = import.meta.env.VITE_PHONE_DISPLAY;
+const WA_NUMBER = import.meta.env.VITE_WA_NUMBER;
 const waLink = (msg) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+const HERO_DAYS = [
+  { d: "Tue", n: "22" },
+  { d: "Wed", n: "23" },
+  { d: "Thu", n: "24" },
+  { d: "Fri", n: "25" },
+  { d: "Sat", n: "26" },
+];
+const HERO_TIMES = ["10:00 AM", "11:00 AM", "12:00 PM", "4:00 PM", "5:30 PM", "6:00 PM"];
+
+const HERO_POINTS = [
+  { icon: Calendar, title: "Book Appointment", desc: "Choose a convenient date & time." },
+  { icon: Phone, title: "Call Before Visiting", desc: "Get quick guidance and consultation." },
+  { icon: User, title: "Experienced Doctor", desc: "12+ years of expertise in women's health." },
+];
 
 /* ---------- scroll reveal ---------- */
 function useReveal() {
@@ -50,36 +68,7 @@ function Reveal({ children, delay = 0, className = "" }) {
   );
 }
 
-/* ---------- data ---------- */
-const SPECIALTIES = [
-  { icon: HeartPulse, name: "Heart Consultation", desc: "Diagnosis and ongoing management for cardiac symptoms." },
-  { icon: Activity, name: "Angioplasty & Stenting", desc: "Minimally invasive procedures for blocked arteries." },
-  { icon: Stethoscope, name: "Heart Failure Management", desc: "Long-term care plans to manage and monitor heart failure." },
-  { icon: Award, name: "Arrhythmia Treatment", desc: "Evaluation and treatment of irregular heart rhythms." },
-  { icon: ShieldCheck, name: "Preventive Cardiology", desc: "Risk assessment before symptoms become emergencies." },
-  { icon: Globe2, name: "Cholesterol & BP Management", desc: "Structured, ongoing management of key heart-risk factors." },
-];
 
-const TRUST_POINTS = [
-  "Personalized care for every patient",
-  "Advanced technology & treatment",
-  "Transparent, honest advice on every option",
-  "Compassionate, unhurried consultations",
-];
-
-const REVIEWS = [
-  { quote: "Dr. Verma explains complicated heart conditions in a way that's genuinely easy to follow.", name: "Anil Sharma" },
-  { quote: "Very satisfied with the treatment and follow-up care — highly recommended for cardiac concerns.", name: "Priya Singh" },
-  { quote: "His diagnosis was accurate and the treatment worked. Thank you, Doctor.", name: "Rakesh Verma" },
-];
-
-const FAQS = [
-  { q: "What should I bring on my first visit?", a: "Any previous test reports, a list of current medications, and your ID. If you've had an ECG or angiography elsewhere, bring those results too." },
-  { q: "Do you provide online consultations?", a: "Yes, video consultations are available for follow-ups and initial screening. Book a slot and our team will share the video link." },
-  { q: "How can I cancel or reschedule an appointment?", a: "Message us on WhatsApp or call the clinic at least 4 hours before your slot and we'll help you reschedule." },
-  { q: "How long is the waiting time?", a: "We schedule appointments in fixed slots to minimize wait times. Emergency cases are prioritized and may affect wait time on a given day." },
-  { q: "Do you accept insurance?", a: "Most major insurance providers and TPAs are accepted. Our front desk will confirm your specific plan before your visit." },
-];
 
 /* ---------- component ---------- */
 export default function App() {
@@ -87,6 +76,8 @@ export default function App() {
   const [openFaq, setOpenFaq] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [slot, setSlot] = useState(0);
+  const [slotTime, setSlotTime] = useState(HERO_TIMES[0]);
 
   const [form, setForm] = useState({
     name: "", phone: "", date: "", time: "", reason: "", patientType: "New Patient",
@@ -111,12 +102,6 @@ export default function App() {
         @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700;800&display=swap');
         .font-display { font-family: 'Newsreader', serif; }
         html { scroll-behavior: smooth; }
-        @keyframes drawPulse { to { stroke-dashoffset: 0; } }
-        .pulse-path { stroke-dasharray: 900; stroke-dashoffset: 900; animation: drawPulse 2.2s cubic-bezier(.22,1,.36,1) 0.2s forwards; }
-        @keyframes pulseDot {
-          0%,100% { r: 5; opacity: 1; } 50% { r: 8; opacity: 0.6; }
-        }
-        .pulse-dot { animation: pulseDot 1.8s ease-in-out infinite; }
         @keyframes ringPulse {
           0% { box-shadow: 0 0 0 0 rgba(214,69,80,0.45); }
           70% { box-shadow: 0 0 0 14px rgba(214,69,80,0); }
@@ -132,7 +117,7 @@ export default function App() {
         }
         .underline-grow:hover::after { width: 100%; }
         @media (prefers-reduced-motion: reduce) {
-          .pulse-path, .pulse-dot, .wa-pulse { animation: none !important; }
+          .wa-pulse { animation: none !important; }
         }
       `}</style>
 
@@ -141,7 +126,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HeartPulse size={22} style={{ color: C.coral }} />
-            <span className="font-display text-xl" style={{ color: C.navy }}>Dr. Rahul Verma</span>
+            <span className="font-display text-xl" style={{ color: C.navy }}>Dr. Rashmi Saxena</span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
             {["Specialties", "Book", "Reviews", "Clinic", "FAQ"].map((l) => (
@@ -175,52 +160,151 @@ export default function App() {
       </header>
 
       {/* ---------- HERO ---------- */}
-      <section className="max-w-6xl mx-auto px-6 pt-14 pb-16 md:pt-20 md:pb-20 grid md:grid-cols-2 gap-12 items-center">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-12 sm:pt-14 sm:pb-16 md:pt-20 md:pb-20 grid md:grid-cols-2 gap-10 md:gap-12 items-center">
         <div>
           <Reveal>
-            <h1 className="font-display text-5xl md:text-6xl leading-[1.05]" style={{ color: C.navy }}>
-              Healthy Heart, <span style={{ color: C.coral, fontStyle: "italic" }}>Better Life.</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs sm:text-sm font-semibold" style={{ background: C.coralSoft, color: C.coral }}>
+              <Heart size={14} fill={C.coralSoft} /> Trusted Care for Every Stage
+            </span>
+          </Reveal>
+
+          <Reveal>
+            <h1 className="font-display mt-4 sm:mt-5 text-[2.35rem] sm:text-5xl md:text-6xl leading-[1.05]" style={{ color: C.navy }}>
+              Your Health,<br />
+              <span className="italic" style={{ color: C.coral }}>Our Priority.</span>
             </h1>
           </Reveal>
-          <Reveal delay={0.1}>
-            <p className="mt-5 text-lg leading-relaxed max-w-md" style={{ color: C.slate }}>
-              Compassionate care, advanced treatment. Your heart is in safe hands with a
-              consultant interventional cardiologist trusted across Lucknow.
+
+          <Reveal delay={0.08}>
+            <p className="mt-4 sm:mt-5 text-[0.95rem] sm:text-lg leading-relaxed max-w-md" style={{ color: C.slate }}>
+              Book an appointment or call <span className="font-semibold" style={{ color: C.navy }}>Dr. Rashmi Saxena</span>, an experienced
+              gynecologist, and get expert guidance — before you visit the clinic. Your comfort and care, always.
             </p>
           </Reveal>
+
+          <Reveal delay={0.14}>
+            <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-x-3 sm:gap-x-6">
+              {HERO_POINTS.map((item) => (
+                <div key={item.title} className="min-w-0">
+                  <item.icon size={22} strokeWidth={1.75} style={{ color: C.coral }} />
+                  <p className="font-semibold text-[13px] sm:text-sm leading-snug mt-2.5">{item.title}</p>
+                  <p className="text-[12px] sm:text-[13px] mt-1 leading-snug" style={{ color: C.slate }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
           <Reveal delay={0.2}>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <a href={waLink("Hi! I'd like to book an appointment with Dr. Rahul Verma.")} target="_blank" rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold text-white shadow-lg" style={{ background: C.coral }}>
-                <MessageCircle size={18} /> Book Appointment
+            <div className="mt-6 sm:mt-7 flex flex-col min-[420px]:flex-row min-[420px]:flex-wrap gap-3">
+              <a href="#book"
+                className="w-full min-[420px]:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-semibold text-white shadow-lg min-h-12"
+                style={{ background: C.coral }}>
+                <Calendar size={18} /> Book Appointment
               </a>
-              <a href={`tel:+${WA_NUMBER}`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-semibold" style={{ border: `1.5px solid ${C.navy}`, color: C.navy }}>
+              <a href={`tel:+${WA_NUMBER}`}
+                className="w-full min-[420px]:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-semibold min-h-12"
+                style={{ background: C.white, border: `1.5px solid ${C.sandDeep}`, color: C.navy }}>
                 <Phone size={16} /> Call Now
               </a>
             </div>
           </Reveal>
-          <Reveal delay={0.3}>
-            <div className="mt-8 flex items-center gap-2 text-sm" style={{ color: C.slate }}>
-              <ShieldCheck size={16} style={{ color: C.coral }} />
-              Consultant Interventional Cardiologist · 12+ years of experience
+
+          <Reveal delay={0.26}>
+            <div className="mt-5 sm:mt-6 flex items-start gap-2 text-xs sm:text-sm" style={{ color: C.slate }}>
+              <ShieldCheck size={16} className="shrink-0 mt-0.5" style={{ color: C.coral }} />
+              <span>Consultant Gynecologist · 12+ years of experience</span>
             </div>
           </Reveal>
         </div>
 
-        {/* signature ECG pulse visual */}
-        <Reveal delay={0.15}>
-          <div className="relative rounded-3xl overflow-hidden" style={{ background: C.navy, aspectRatio: "4/5" }}>
-            <div className="absolute inset-0 flex items-center justify-center opacity-90">
-              <div className="w-3/4 h-1/2 rounded-2xl" style={{ background: `linear-gradient(160deg, ${C.coralSoft}, ${C.sand})` }} />
+        <Reveal delay={0.15} className="min-w-0 w-full">
+          <div className="relative mx-auto w-full max-w-[460px] md:max-w-none">
+            <div className="rounded-[28px] p-2.5 sm:p-3" style={{ background: C.navy }}>
+              <div className="relative">
+                <img
+                  src={doctorPhoto}
+                  alt="Dr. Rashmi Saxena"
+                  className="w-full h-[460px] sm:h-[520px] object-cover object-[center_12%] rounded-[20px]"
+                />
+                {/* <div
+                  className="absolute z-10 left-2.5 right-20 bottom-6 sm:left-auto sm:bottom-8 sm:right-14 sm:w-[220px] rounded-2xl p-3"
+                  style={{ background: C.white, boxShadow: "0 18px 40px -16px rgba(20,33,61,0.45)" }}
+                >
+                  <div className="flex items-start gap-2">
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ background: C.coralSoft }}>
+                      <Calendar size={14} style={{ color: C.coral }} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold leading-tight">Choose a convenient time</p>
+                      <p className="text-[11px] mt-0.5 leading-snug" style={{ color: C.slate }}>Select a date and time for your consultation or call.</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid grid-cols-5 gap-1">
+                    {HERO_DAYS.map((day, i) => (
+                      <button
+                        key={day.d}
+                        type="button"
+                        onClick={() => setSlot(i)}
+                        className="rounded-lg py-1.5 text-center leading-none"
+                        style={{
+                          background: slot === i ? C.coral : C.sand,
+                          color: slot === i ? C.white : C.navy,
+                        }}
+                      >
+                        <span className="block text-[10px] font-medium opacity-80">{day.d}</span>
+                        <span className="block text-sm font-semibold mt-0.5">{day.n}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="relative mt-2.5">
+                    <select
+                      aria-label="Preferred time"
+                      value={slotTime}
+                      onChange={(e) => setSlotTime(e.target.value)}
+                      className="w-full appearance-none rounded-lg px-3 py-2 pr-8 text-sm font-medium outline-none"
+                      style={{ background: C.white, border: `1px solid ${C.sandDeep}`, color: C.navy }}
+                    >
+                      {HERO_TIMES.map((time) => <option key={time}>{time}</option>)}
+                    </select>
+                    <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: C.slate }} />
+                  </div>
+                  <a href="#book"
+                    className="mt-2.5 w-full inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-[13px] font-semibold text-white whitespace-nowrap min-h-11"
+                    style={{ background: C.coral }}>
+                    <Calendar size={15} /> Schedule Consultation
+                  </a>
+                </div> */}
+              </div>
             </div>
-            <svg viewBox="0 0 400 120" className="absolute left-0 right-0 top-1/2 -translate-y-1/2 w-full">
-              <path d="M0,60 L90,60 L110,20 L130,100 L150,40 L170,60 L400,60"
-                fill="none" stroke={C.coral} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="pulse-path" />
-              <circle cx="130" cy="100" r="5" fill={C.coral} className="pulse-dot" />
-            </svg>
-            <div className="absolute bottom-5 left-5 right-5 rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.95)" }}>
-              <p className="font-semibold text-sm" style={{ color: C.navy }}>Dr. Rahul Verma</p>
-              <p className="text-xs mt-0.5" style={{ color: C.slate }}>MBBS, MD (Cardiology) · Interventional Cardiologist</p>
+
+            <div className="relative z-20 -mt-5 sm:-mt-7 mx-1 rounded-2xl px-3 py-3 sm:px-4"
+              style={{ background: "#FBF6F0", boxShadow: "0 14px 32px -18px rgba(20,33,61,0.45)" }}>
+              <div className="flex items-start gap-2.5">
+                <img src={doctorPhoto} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover object-[center_15%]" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col md:flex-row items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm leading-tight">Dr. Rashmi Saxena</p>
+                      <p className="text-[11px] sm:text-xs mt-0.5 leading-snug" style={{ color: C.slate }}>MBBS, MS (Obstetrics & Gynecology)</p>
+                      <p className="mt-1 flex items-center gap-1 text-[11px] sm:text-xs">
+                        <Star size={12} fill="#E2A100" strokeWidth={0} />
+                        <span className="font-semibold">4.8</span>
+                        <span style={{ color: C.slate }}>(120+ reviews)</span>
+                      </p>
+                    </div>
+                    <div className="shrink-0 flex flex-row items-center text-center w-full md:w-[142px] rounded-lg px-2 py-2" style={{ background: C.coralSoft }}>
+                      <span className="flex h-7 w-8 items-center justify-center rounded-full" style={{ background: C.coralSoft }}>
+                        <Award size={15} />
+                      </span>
+                      <p className="text-[10px] font-semibold leading-tight mt-1">12+ Years of Experience</p>
+                    </div>
+                  </div>
+                  <p className="mt-2 flex items-center gap-1.5 text-[11px] sm:text-xs" style={{ color: C.slate }}>
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "#3BA55D" }} />
+                    Experienced Gynecologist · 12+ years of experience
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </Reveal>
